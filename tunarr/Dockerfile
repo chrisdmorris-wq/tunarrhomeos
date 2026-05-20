@@ -7,23 +7,23 @@ RUN apk add --no-cache \
     npm \
     ffmpeg \
     wget \
-    curl
+    curl \
+    jq
 
 # Create app directory
 WORKDIR /app
 
-# Download Tunarr - try to get the latest release
-RUN LATEST_RELEASE=$(curl -s https://api.github.com/repos/chrisbenincasa/tunarr/releases/latest | grep -oP '"browser_download_url": "\K.*linux-x64\.tar\.gz(?=")' | head -1) && \
-    if [ -z "$LATEST_RELEASE" ]; then \
-      echo "Failed to find latest release, trying npm install..."; \
-      npm install -g @chrisbenincasa/tunarr; \
+# Download Tunarr using npm as the primary method
+RUN npm install -g @chrisbenincasa/tunarr || \
+    (echo "npm install failed, attempting direct download..." && \
+    DOWNLOAD_URL=$(curl -s https://api.github.com/repos/chrisbenincasa/tunarr/releases/latest | jq -r '.assets[] | select(.name | contains("linux-x64")) | .browser_download_url' | head -1) && \
+    if [ -n "$DOWNLOAD_URL" ]; then \
+      wget -q "$DOWNLOAD_URL" -O tunarr.tar.gz && \
+      tar xzf tunarr.tar.gz && \
+      rm tunarr.tar.gz; \
     else \
-      echo "Downloading from: $LATEST_RELEASE"; \
-      wget -q "$LATEST_RELEASE" -O tunarr-linux.tar.gz && \
-      tar xzf tunarr-linux.tar.gz && \
-      rm tunarr-linux.tar.gz && \
-      chmod +x tunarr || (echo "Direct download failed, using npm" && npm install -g @chrisbenincasa/tunarr); \
-    fi
+      echo "Failed to download Tunarr"; exit 1; \
+    fi)
 
 # Create config directory
 RUN mkdir -p /config/tunarr && \
