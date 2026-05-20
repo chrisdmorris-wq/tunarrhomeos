@@ -1,0 +1,27 @@
+---
+name: Tunarr
+description: Create custom live TV channels from Plex, Jellyfin, Emby, or local files
+version: "1.0.0"
+slug: tunarr
+maintainers:
+  - chrisdmorris-wq
+environment:
+  TZ: America/New_York
+ports:
+  8000/tcp:
+    description: Tunarr Web UI
+schema:
+  TZ: str?
+image: ghcr.io/chrisdmorris-wq/tunarrhomeos-{arch}
+arch:
+  - aarch64
+  - amd64
+resources:
+  cpus: 1000m
+  memory: 512M
+healthy_init_delay: 60
+mounts:
+  config:
+    bind: config
+  media_cache:
+    bind: media_cache
