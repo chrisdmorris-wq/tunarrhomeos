@@ -27,22 +27,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Build and Push amd64
+      - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           context: ./tunarr
           file: ./tunarr/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/tunarrhomeos-amd64:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/tunarrhomeos:latest
+            ghcr.io/${{ github.repository_owner }}/tunarrhomeos:1.0.0
           build-args: |
-            BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
-      
-      - name: Build and Push aarch64
-        uses: docker/build-push-action@v5
-        with:
-          context: ./tunarr
-          file: ./tunarr/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/tunarrhomeos-aarch64:latest
-          build-args: |
-            BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
+            BUILD_FROM=ghcr.io/home-assistant/amd64-homeassistant:latest
