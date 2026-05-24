@@ -16,8 +16,9 @@ RUN LATEST_URL=$(curl -s https://api.github.com/repos/chrisbenincasa/tunarr/rele
     wget -q "$LATEST_URL" -O tunarr.tar.gz && \
     tar xzf tunarr.tar.gz && \
     rm tunarr.tar.gz && \
-    chmod +x tunarr && \
-    ls -la /app/
+    ls -la /app/ && \
+    find /app -name "tunarr" -type f && \
+    chmod +x /app/tunarr
 
 # Create config and cache directories
 RUN mkdir -p /config/tunarr && \
@@ -31,4 +32,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:8000 || exit 1
 
 # Start Tunarr
-CMD ["./tunarr", "--config", "/config/tunarr"]
+CMD ["/app/tunarr", "--config", "/config/tunarr"]
