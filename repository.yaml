@@ -1,0 +1,4 @@
+# https://developers.home-assistant.io/docs/apps/repository#repository-configuration
+name: Tunarr Home Assistant App Repository
+url: 'https://github.com/chrisdmorris-wq/tunarrhomeos'
+maintainer: chrisdmorris-wq
