@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+# Start Tunarr with config directory
+exec /app/tunarr --config /config/tunarr
