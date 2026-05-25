@@ -1,40 +1,18 @@
-name: Build Tunarr Home Assistant OS App
+name: Build Tunarr App
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
+    paths:
+      - 'tunarr/**'
+      - '.github/workflows/build.yaml'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      
-      - name: Login to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Build and Push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./tunarr
-          file: ./tunarr/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/tunarrhomeos:latest
-            ghcr.io/${{ github.repository_owner }}/tunarrhomeos:1.0.0
-          build-args: |
-            BUILD_FROM=ghcr.io/home-assistant/amd64-homeassistant:latest
+  build-app:
+    name: Build App
+    uses: ./.github/workflows/build-app.yaml
+    with:
+      app: tunarr
+      publish: true
